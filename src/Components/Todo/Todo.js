@@ -118,16 +118,24 @@ const Todo = (props) => {
           <Button onClick={searchCloseHandler}>
             <CloseSquareFilled />
           </Button>
-          {noteTempList.map((note, index) => {
-            return (
-              <SingleTodo
-                key={noteState.id + Math.random(index * 1000).toString()}
-                info={note}
-                deleted={() => deleteNoteHandler(index)}
-                saved={(inputValue) => saveAfterEditHandler(inputValue, index)}
-              />
-            );
-          })}
+          <DragDropContext>
+            <ul>
+              {noteTempList.map((note, index) => {
+                return (
+                  <li>
+                    <SingleTodo
+                      key={noteState.id + Math.random(index * 1000).toString()}
+                      info={note}
+                      deleted={() => deleteNoteHandler(index)}
+                      saved={(inputValue) =>
+                        saveAfterEditHandler(inputValue, index)
+                      }
+                    />
+                  </li>
+                );
+              })}
+            </ul>
+          </DragDropContext>
         </div>
       ) : (
         noteList.map((note, index) => {
