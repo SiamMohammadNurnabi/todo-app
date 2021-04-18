@@ -3,11 +3,12 @@ import { CloseSquareFilled } from "@ant-design/icons";
 import React, { useState, useEffect } from "react";
 import NoteModal from "../Note/NoteModal";
 import SingleTodo from "../TodoList/SingleTodo";
+import { DragDropContext } from "react-beautiful-dnd";
 
 const Todo = (props) => {
   const initialList = () => JSON.parse(window.localStorage.getItem("NoteList"));
   const [modalState, setModalState] = useState({ visible: false });
-  const [noteState, setNoteState] = useState({ data: "", date: "" });
+  const [noteState, setNoteState] = useState({ id: "", data: "", date: "" });
   const [noteList, setNoteList] = useState(initialList || []);
   const [noteTempList, setTempNoteList] = useState([]);
   const [searchState, setsearchState] = useState(false);
@@ -26,7 +27,11 @@ const Todo = (props) => {
   };
 
   const inputValueHander = (event) => {
-    setNoteState({ data: event.target.value, date: new Date().toDateString() });
+    setNoteState({
+      id: new Date(),
+      data: event.target.value,
+      date: new Date().toDateString(),
+    });
   };
 
   const saveButtonHandler = () => {
@@ -56,7 +61,7 @@ const Todo = (props) => {
     // newList[index] = note;
     // console.log("newList", newList);
     // setNoteList(newList);
-    console.log("inputValue",inputValue);
+    console.log("inputValue", inputValue);
 
     // const note = {...noteState};
     // note.data = event.target.value;
@@ -116,7 +121,7 @@ const Todo = (props) => {
           {noteTempList.map((note, index) => {
             return (
               <SingleTodo
-                key={new Date().toString() + index + note.date}
+                key={noteState.id + Math.random(index * 1000).toString()}
                 info={note}
                 deleted={() => deleteNoteHandler(index)}
                 saved={(inputValue) => saveAfterEditHandler(inputValue, index)}
@@ -128,7 +133,7 @@ const Todo = (props) => {
         noteList.map((note, index) => {
           return (
             <SingleTodo
-              key={new Date().toString() + index}
+              key={noteState.id + Math.random(index * 1000).toString()}
               info={note}
               deleted={() => deleteNoteHandler(index)}
               saved={(inputValue) => saveAfterEditHandler(inputValue, index)}
