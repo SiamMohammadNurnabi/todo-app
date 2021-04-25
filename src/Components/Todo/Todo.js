@@ -3,12 +3,17 @@ import { CloseSquareFilled } from "@ant-design/icons";
 import React, { useState, useEffect } from "react";
 import NoteModal from "../Note/NoteModal";
 import SingleTodo from "../TodoList/SingleTodo";
-import { DragDropContext } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 const Todo = (props) => {
   const initialList = () => JSON.parse(window.localStorage.getItem("NoteList"));
   const [modalState, setModalState] = useState({ visible: false });
-  const [noteState, setNoteState] = useState({ id: "", data: "", date: "" });
+  const [noteState, setNoteState] = useState({
+    id: "",
+    data: "",
+    date: "",
+    status: "",
+  });
   const [noteList, setNoteList] = useState(initialList || []);
   const [noteTempList, setTempNoteList] = useState([]);
   const [searchState, setsearchState] = useState(false);
@@ -28,9 +33,10 @@ const Todo = (props) => {
 
   const inputValueHander = (event) => {
     setNoteState({
-      id: new Date(),
+      id: new Date().toString(),
       data: event.target.value,
       date: new Date().toDateString(),
+      status: "pending",
     });
   };
 
@@ -52,8 +58,9 @@ const Todo = (props) => {
   };
 
   const saveAfterEditHandler = (inputValue, index) => {
-    const note = { ...noteList[index] };
-    console.log("note", note);
+    // const note = { ...noteList[index] };
+    console.log("index:", index);
+    console.log("inputValue:", inputValue);
     // note.data = inputValue;
     // console.log("note.data", note.data);
     // const newList = [...noteList];
@@ -61,7 +68,7 @@ const Todo = (props) => {
     // newList[index] = note;
     // console.log("newList", newList);
     // setNoteList(newList);
-    console.log("inputValue", inputValue);
+    // console.log("inputValue", inputValue);
 
     // const note = {...noteState};
     // note.data = event.target.value;
@@ -83,6 +90,19 @@ const Todo = (props) => {
 
   const searchCloseHandler = () => {
     setsearchState(false);
+  };
+
+  const onDragEndHandler = (result) => {
+    const newList = [...noteList];
+    const [reorderedItem] = newList.splice(result.source.index, 1);
+    newList.splice(result.destination.index, 0, reorderedItem);
+    setNoteList(newList);
+  };
+
+  const statusChangedHandler = (value, index) => {
+    const newList = [...noteList];
+    newList[index].status = value;
+    setNoteList(newList);
   };
 
   return (
@@ -121,7 +141,7 @@ const Todo = (props) => {
           {noteTempList.map((note, index) => {
             return (
               <SingleTodo
-                key={noteState.id + Math.random(index * 1000).toString()}
+                key={note.id}
                 info={note}
                 deleted={() => deleteNoteHandler(index)}
                 saved={(inputValue) => saveAfterEditHandler(inputValue, index)}
@@ -130,16 +150,47 @@ const Todo = (props) => {
           })}
         </div>
       ) : (
-        noteList.map((note, index) => {
-          return (
-            <SingleTodo
-              key={noteState.id + Math.random(index * 1000).toString()}
-              info={note}
-              deleted={() => deleteNoteHandler(index)}
-              saved={(inputValue) => saveAfterEditHandler(inputValue, index)}
-            />
-          );
-        })
+        <DragDropContext onDragEnd={onDragEndHandler}>
+          <Droppable droppableId="anything">
+            {(provided) => (
+              <ul
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                style={{ listStyle: "none" }}
+              >
+                {noteList.map((note, index) => {
+                  return (
+                    <Draggable
+                      key={note.id}
+                      draggableId={note.id}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <li
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          ref={provided.innerRef}
+                        >
+                          <SingleTodo
+                            info={note}
+                            deleted={() => deleteNoteHandler(index)}
+                            saved={(inputValue) =>
+                              saveAfterEditHandler(inputValue, index)
+                            }
+                            statusChanged={(value) =>
+                              statusChangedHandler(value, index)
+                            }
+                          />
+                        </li>
+                      )}
+                    </Draggable>
+                  );
+                })}
+                {provided.placeholder}
+              </ul>
+            )}
+          </Droppable>
+        </DragDropContext>
       )}
     </div>
   );

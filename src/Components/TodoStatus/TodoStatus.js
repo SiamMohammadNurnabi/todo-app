@@ -1,19 +1,19 @@
-import { Menu, Dropdown, Button } from "antd";
+import { Form, Select } from "antd";
 
-const TodoStatus = () => {
-  const menu = (
-    <Menu selectable>
-      <Menu.Item key={1}>In progress</Menu.Item>
-      <Menu.Item key={2}>Postponed</Menu.Item>
-      <Menu.Item key={3}>Completed</Menu.Item>
-      <Menu.Item key={4} danger>Rejected</Menu.Item>
-    </Menu>
-  );
+const TodoStatus = (props) => {
+  console.log(props.status);
   return (
     <div>
-      <Dropdown overlay={menu} placement="topRight">
-        <Button type="primary">status</Button>
-      </Dropdown>
+      <Form>
+        <Form.Item name="status" label="status">
+          <Select defaultValue={props.status} onChange={props.changed}>
+            <Select.Option value="pending">Pending</Select.Option>
+            <Select.Option value="postponed">Postponed</Select.Option>
+            <Select.Option value="completed">Completed</Select.Option>
+            <Select.Option value="rejected">Rejected</Select.Option>
+          </Select>
+        </Form.Item>
+      </Form>
     </div>
   );
 };
