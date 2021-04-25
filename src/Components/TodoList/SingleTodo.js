@@ -1,10 +1,9 @@
 import { Button, Card, Col, Input, Row } from "antd";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import TodoStatus from "../TodoStatus/TodoStatus";
 import { StarOutlined, StarFilled } from "@ant-design/icons";
 
 const SingleTodo = (props) => {
-  const inputValueRef = useRef();
   const [editState, setEditState] = useState(false);
   const [importantState, setImportantState] = useState({
     isImportant: true,
@@ -40,16 +39,15 @@ const SingleTodo = (props) => {
             bordered={true}
             style={{
               background: importantState.background,
-              position: "relative",
             }}
           >
             {editState ? (
               <div>
                 <Input.TextArea
-                  defaultValue={props.info.data}
-                  ref={inputValueRef}
+                  name="data"
+                  initialValue={props.info.data}
+                  onChange={props.edited}
                 />
-                {/* <p>siam:{inputValueRef.current.value}</p> */}
                 <Button
                   key="back"
                   type="primary"
@@ -62,41 +60,61 @@ const SingleTodo = (props) => {
                   key="submit"
                   type="primary"
                   onClick={() => {
-                    props.saved(inputValueRef.current.value);
-                    console.log("inputValueRef", inputValueRef);
+                    props.saved();
+                    cancelHandler();
                   }}
                 >
                   Save
                 </Button>
               </div>
             ) : (
-              <div>
-                <p>{props.info.data}</p>
-                <p>{props.info.date}</p>
-                {importantState.isImportant ? (
-                  <p onClick={importantStateOnHandler}>
-                    <StarOutlined />
-                  </p>
-                ) : (
-                  <p onClick={importantStateOffHandler}>
-                    <StarFilled />
-                  </p>
-                )}
-                <TodoStatus
-                  changed={props.statusChanged}
-                  status={props.info.status}
-                />
-                <Button
-                  type="primary"
-                  style={{ margin: 10 }}
-                  onClick={editHandler}
-                >
-                  Edit
-                </Button>
-                <Button type="danger" onClick={props.deleted}>
-                  Delete
-                </Button>
-              </div>
+              <>
+                <Row>
+                  <Col span={8}>
+                    {importantState.isImportant ? (
+                      <p onClick={importantStateOnHandler}>
+                        <StarOutlined />
+                      </p>
+                    ) : (
+                      <p onClick={importantStateOffHandler}>
+                        <StarFilled />
+                      </p>
+                    )}
+                  </Col>
+                  <Col span={8} />
+                  <Col span={8}>
+                    <TodoStatus
+                      changed={props.statusChanged}
+                      status={props.info.status}
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={24}>
+                    <p>{props.info.data}</p>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={8}>
+                    <p>{props.info.date}</p>
+                  </Col>
+                  <Col span={8} />
+                  <Col span={8}>
+                    <div>
+                      <Button
+                        type="primary"
+                        style={{ margin: 10 }}
+                        onClick={editHandler}
+                      >
+                        Edit
+                      </Button>
+                      <Button type="danger" onClick={props.deleted}>
+                        Delete
+                      </Button>
+                    </div>
+                  </Col>
+                </Row>
+              </>
             )}
           </Card>
         </Col>

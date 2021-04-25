@@ -57,22 +57,23 @@ const Todo = (props) => {
     setNoteList([]);
   };
 
-  const saveAfterEditHandler = (inputValue, index) => {
-    // const note = { ...noteList[index] };
-    console.log("index:", index);
-    console.log("inputValue:", inputValue);
-    // note.data = inputValue;
-    // console.log("note.data", note.data);
-    // const newList = [...noteList];
-    // console.log("newList1", newList);
-    // newList[index] = note;
-    // console.log("newList", newList);
-    // setNoteList(newList);
-    // console.log("inputValue", inputValue);
+  const editHandler = (event) => {
+    setNoteState({
+      id: noteState.id,
+      data: event.target.value,
+      date: noteState,
+      status: noteState,
+    });
+  };
 
-    // const note = {...noteState};
-    // note.data = event.target.value;
-    // console.log(note);
+  const saveAfterEditHandler = (index) => {
+    const newList = [...noteList];
+    newList[index].data = noteState.data;
+    newList[index].date = new Date().toDateString();
+    setNoteList(newList);
+    setNoteState({
+      data: "",
+    });
   };
 
   const onSearch = (value) => {
@@ -144,7 +145,8 @@ const Todo = (props) => {
                 key={note.id}
                 info={note}
                 deleted={() => deleteNoteHandler(index)}
-                saved={(inputValue) => saveAfterEditHandler(inputValue, index)}
+                edited={editHandler}
+                saved={() => saveAfterEditHandler(index)}
               />
             );
           })}
@@ -174,9 +176,8 @@ const Todo = (props) => {
                           <SingleTodo
                             info={note}
                             deleted={() => deleteNoteHandler(index)}
-                            saved={(inputValue) =>
-                              saveAfterEditHandler(inputValue, index)
-                            }
+                            edited={editHandler}
+                            saved={() => saveAfterEditHandler(index)}
                             statusChanged={(value) =>
                               statusChangedHandler(value, index)
                             }
