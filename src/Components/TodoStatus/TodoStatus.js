@@ -1,12 +1,11 @@
 import { Form, Select } from "antd";
 
 const TodoStatus = (props) => {
-  console.log(props.status);
   return (
     <div>
-      <Form>
+      <Form initialValues={{ status: props.status }}>
         <Form.Item name="status" label="status">
-          <Select defaultValue={props.status} onChange={props.changed}>
+          <Select onChange={props.changed}>
             <Select.Option value="pending">Pending</Select.Option>
             <Select.Option value="postponed">Postponed</Select.Option>
             <Select.Option value="completed">Completed</Select.Option>
