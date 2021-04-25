@@ -83,7 +83,8 @@ const SingleTodo = (props) => {
                   </p>
                 )}
                 <TodoStatus
-                  style={{ position: "absolute", top: 10, left: 600 }}
+                  changed={props.statusChanged}
+                  status={props.info.status}
                 />
                 <Button
                   type="primary"
