@@ -58,7 +58,7 @@ const Todo = (props) => {
   };
 
   const saveAfterEditHandler = (inputValue, index) => {
-    const note = { ...noteList[index] };
+    // const note = { ...noteList[index] };
     console.log("index:", index);
     console.log("inputValue:", inputValue);
     // note.data = inputValue;
